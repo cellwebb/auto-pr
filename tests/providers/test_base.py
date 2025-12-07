@@ -386,7 +386,7 @@ class TestSanitizeErrorResponse:
 
     def test_redacts_stripe_key(self):
         """Test that Stripe keys are redacted."""
-        text = "Key: sk_live_abcdefghijklmnopqrstuvwxyz123456"
+        text = "Key: sk_live_" + "x" * 32  # Fake key pattern for testing
         result = sanitize_error_response(text)
         assert "sk_live_" not in result
         assert "[REDACTED]" in result
