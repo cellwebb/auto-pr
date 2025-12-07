@@ -1,0 +1,37 @@
+<hint>
+Additional context provided by the user: <hint_text></hint_text>
+</hint>
+
+<pull_request_info>
+PR #<pr_number>: <pr_title>
+Base branch: <base_branch>
+Target branch: <target_branch>
+Merge method: <merge_method>
+</pull_request_info>
+
+<pr_description>
+<existing_description></existing_description>
+</pr_description>
+
+<git_diff>
+<diff></diff>
+</git_diff>
+
+<git_diff_stat>
+<diff_stat></diff_stat>
+</git_diff_stat>
+<task_type>merge commit message</task_type>
+<format_requirements>Follow conventional commit format with type, optional scope, and clear description</format_requirements>
+
+<language_instructions>
+IMPORTANT: You MUST write the entire merge commit message in <language_name></language_name>.
+All text in the response, including the summary and body, must be in <language_name></language_name>.
+</language_instructions>
+
+<format_instructions>
+IMMEDIATELY AFTER ANALYZING THE CHANGES, RESPOND WITH ONLY THE MERGE COMMIT MESSAGE.
+DO NOT include any preamble, reasoning, explanations or anything other than the merge commit message itself.
+DO NOT use markdown formatting, headers, or code blocks.
+The entire response will be passed directly to 'git merge --no-ff -m'.
+Include "Closes #<pr_number>" at the end of the message.
+</format_instructions>

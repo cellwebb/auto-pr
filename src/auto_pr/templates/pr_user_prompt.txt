@@ -1,0 +1,35 @@
+<hint>
+Additional context provided by the user: <hint_text></hint_text>
+</hint>
+
+<base_branch>
+Base branch: <base_branch></base_branch>
+</base_branch>
+
+<git_diff>
+<diff></diff>
+</git_diff>
+
+<git_diff_stat>
+<diff_stat></diff_stat>
+</git_diff_stat>
+
+<git_status>
+<status></status>
+</git_status>
+
+<task_type>pull request description</task_type>
+<format_requirements>Follow the structured format with Summary, Changes, Testing, and Impact sections</format_requirements>
+
+<language_instructions>
+IMPORTANT: You MUST write the entire pull request description in <language_name></language_name>.
+All text in the response, including headings and bullet points, must be in <language_name></language_name>.
+</language_instructions>
+
+<format_instructions>
+IMMEDIATELY AFTER ANALYZING THE CHANGES, RESPOND WITH ONLY THE PULL REQUEST DESCRIPTION.
+DO NOT include any preamble, reasoning, explanations or anything other than the PR description itself.
+DO NOT use markdown code blocks around your response.
+Use markdown formatting for headings (##) and bullet points.
+Use **bold** for emphasis on important points.
+</format_instructions>

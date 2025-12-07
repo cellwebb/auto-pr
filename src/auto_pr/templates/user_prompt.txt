@@ -1,0 +1,38 @@
+<context>
+<hint>
+Additional context provided by the user: <hint_text></hint_text>
+</hint>
+
+<pr_info>
+<pr_details></pr_details>
+</pr_info>
+
+<git_diff>
+<diff></diff>
+</git_diff>
+
+<git_diff_stat>
+<diff_stat></diff_stat>
+</git_diff_stat>
+
+<git_status>
+<status></status>
+</git_status>
+
+<analysis_scope>
+<task_type></task_type> - <format_requirements></format_requirements>
+</analysis_scope>
+</context>
+
+<language_instructions>
+IMPORTANT: You MUST write the entire response in <language_name></language_name>.
+All text in the response, including headings and bullet points, must be in <language_name></language_name>.
+</language_instructions>
+
+<format_instructions>
+IMMEDIATELY AFTER ANALYZING THE CHANGES, RESPOND WITH ONLY THE <task_type></task_type>.
+DO NOT include any preamble, reasoning, explanations or anything other than the requested content.
+DO NOT use markdown code blocks around your response.
+For PR descriptions, use markdown formatting for headings and bullet points.
+For merge commits, use plain text format suitable for git commit messages.
+</format_instructions>
