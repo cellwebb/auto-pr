@@ -24,12 +24,12 @@ $RECYCLE.BIN/
 *.lnk
 
 # =========================
-# GAC Project-specific files
+# Auto-PR Project-specific files
 # =========================
-.gac.env
-.gac_cache/
-.gac-history
-.gac-config.json
+.auto-pr.env
+.auto-pr_cache/
+.auto-pr-history
+.auto-pr-config.json
 conversation_cache/
 saved_messages/
 secrets/
