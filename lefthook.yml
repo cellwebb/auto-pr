@@ -1,0 +1,24 @@
+pre-commit:
+  parallel: true
+  commands:
+    markdownlint:
+      glob: "*.md"
+      run: npx markdownlint-cli2 --config .markdownlint-cli2.yaml {staged_files}
+    prettier:
+      glob: "*.{md,yaml,yml,json}"
+      run: npx prettier@3.1.0 --write {staged_files}
+      stage_fixed: true
+    ruff-lint:
+      glob: "*.py"
+      exclude: ^(\.venv/|_deprecated/)
+      run: uvx ruff check --fix {staged_files}
+      stage_fixed: true
+    ruff-format:
+      glob: "*.py"
+      exclude: ^(\.venv/|_deprecated/)
+      run: uvx ruff format {staged_files}
+      stage_fixed: true
+    mypy:
+      glob: "*.py"
+      exclude: ^(\.venv/|_deprecated/|tests/)
+      run: uv run -- mypy src/auto_pr --strict
