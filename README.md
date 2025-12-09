@@ -73,6 +73,13 @@ auto-pr create-pr  # Create a new PR with AI-generated description
 - **Context-aware**: Include relevant context from the PR description
 - **Integration ready**: Perfect for automated merge workflows
 
+### 🛡️ Full PR Lifecycle Management
+
+- **Merge conflict handling**: Automatic detection with guided or auto-resolution (rebase/merge)
+- **CI/CD check monitoring**: Wait for checks, handle failures, retry flaky tests
+- **Branch management**: Sync with base branch, force-push safely after rebase
+- **Review workflows**: Track approval status, request reviewers automatically
+
 ### 🛠 Developer Experience
 
 - **Interactive mode**: Ask questions to gather more context for better PR descriptions
@@ -111,6 +118,15 @@ auto-pr create-pr --model openai:gpt-4
 
 # Verbose mode with detailed testing instructions
 auto-pr create-pr --verbose
+
+# Request reviewers and add labels
+auto-pr create-pr --reviewer user1 --reviewer user2 --label bug
+
+# Wait for CI checks after creating
+auto-pr create-pr --wait-checks
+
+# Sync branch with base before creating PR
+auto-pr create-pr --sync
 ```
 
 ### Merging Pull Requests
@@ -127,6 +143,41 @@ auto-pr merge-pr --pr-number 123 --message-only
 
 # Use specific model for merge message
 auto-pr merge-pr --pr-number 123 --model anthropic:claude-3-sonnet
+
+# Skip waiting for CI checks
+auto-pr merge-pr --pr-number 123 --no-wait-checks
+
+# Auto-resolve conflicts via rebase
+auto-pr merge-pr --pr-number 123 --auto-resolve
+
+# Delete branch after merging
+auto-pr merge-pr --pr-number 123 --delete-branch
+```
+
+### Creating Branches from Changes
+
+```bash
+# Generate branch name from staged changes
+auto-pr create-branch
+
+# Include unstaged changes in analysis
+auto-pr create-branch --include-unstaged
+
+# Provide context for better branch names
+auto-pr create-branch --hint "user authentication feature"
+
+# Create branch without checking it out
+auto-pr create-branch --no-checkout
+```
+
+### Checking PR Status
+
+```bash
+# Show current branch status and any open PR
+auto-pr status
+
+# Show specific PR status with checks and reviews
+auto-pr status --pr-number 123
 ```
 
 ### Updating Existing PRs

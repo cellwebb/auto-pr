@@ -14,6 +14,12 @@ This document describes all available flags and options for the `auto-pr` CLI to
   - [Output and Verbosity](#output-and-verbosity)
   - [Help and Version](#help-and-version)
   - [Example Workflows](#example-workflows)
+  - [PR Workflow Commands](#pr-workflow-commands)
+    - [create-branch Command](#create-branch-command)
+    - [create-pr Command](#create-pr-command)
+    - [merge-pr Command](#merge-pr-command)
+    - [update-pr Command](#update-pr-command)
+    - [status Command](#status-command)
   - [Advanced](#advanced)
     - [Script Integration and External Processing](#script-integration-and-external-processing)
     - [Skipping Pre-commit and Lefthook Hooks](#skipping-pre-commit-and-lefthook-hooks)
@@ -211,6 +217,174 @@ Generates an LLM-powered commit message for staged changes and prompts for confi
   # Ask questions and generate detailed commit message
   ```
 
+## PR Workflow Commands
+
+auto-pr provides comprehensive pull request lifecycle management with the following commands:
+
+### create-branch Command
+
+Generate a descriptive branch name from your changes using AI:
+
+| Flag / Option        | Short | Description                           |
+| -------------------- | ----- | ------------------------------------- |
+| `--hint`             | `-h`  | Additional context to guide the AI    |
+| `--model`            | `-m`  | Override the default model            |
+| `--quiet`            | `-q`  | Suppress non-error output             |
+| `--yes`              | `-y`  | Skip confirmation prompt              |
+| `--show-prompt`      |       | Show the prompt sent to the LLM       |
+| `--include-unstaged` | `-u`  | Include unstaged changes in analysis  |
+| `--no-checkout`      |       | Create branch without checking it out |
+
+**Examples:**
+
+```sh
+# Generate branch name from staged changes
+auto-pr create-branch
+
+# Include unstaged changes
+auto-pr create-branch --include-unstaged
+
+# Provide context for better naming
+auto-pr create-branch --hint "adding OAuth2 support"
+
+# Auto-confirm without prompt
+auto-pr create-branch --yes
+```
+
+**Branch Naming Conventions:**
+
+The AI generates branch names following these patterns:
+
+- `feat/add-user-authentication`
+- `fix/button-alignment-issue`
+- `refactor/simplify-database-queries`
+- `docs/update-api-readme`
+- `chore/upgrade-dependencies`
+
+### create-pr Command
+
+Generate and create a pull request with AI-powered descriptions:
+
+| Flag / Option   | Short | Description                                            |
+| --------------- | ----- | ------------------------------------------------------ |
+| `--base`        | `-b`  | Base branch to compare against (default: repo default) |
+| `--title-only`  |       | Generate only PR title, not full description           |
+| `--draft`       |       | Create PR as draft                                     |
+| `--interactive` | `-i`  | Ask questions to gather more context                   |
+| `--dry-run`     |       | Preview PR content without creating                    |
+| `--show-prompt` |       | Show the prompt sent to the LLM                        |
+| `--language`    | `-l`  | Override language for PR description                   |
+| `--yes`         | `-y`  | Skip confirmation prompt                               |
+| `--model`       | `-m`  | Override the default model                             |
+| `--quiet`       | `-q`  | Suppress non-error output                              |
+| `--verbose`     | `-v`  | Generate detailed PR description                       |
+| `--hint`        | `-h`  | Additional context to guide the AI                     |
+| `--reviewer`    | `-r`  | Request reviewers (can be used multiple times)         |
+| `--label`       |       | Add labels (can be used multiple times)                |
+| `--wait-checks` | `-w`  | Wait for CI checks after creating PR                   |
+| `--sync`        |       | Sync branch with base before creating PR               |
+
+**Examples:**
+
+```sh
+# Create PR with reviewers and labels
+auto-pr create-pr --reviewer user1 --reviewer user2 --label bug --label urgent
+
+# Create draft PR and wait for checks
+auto-pr create-pr --draft --wait-checks
+
+# Sync with base branch before creating
+auto-pr create-pr --sync --base develop
+```
+
+### merge-pr Command
+
+Generate AI-powered merge commit messages and merge PRs with full lifecycle handling:
+
+| Flag / Option      | Short | Description                                          |
+| ------------------ | ----- | ---------------------------------------------------- |
+| `--pr-number`      | `-n`  | PR number to merge (required)                        |
+| `--merge-method`   |       | Merge strategy: merge, squash, or rebase             |
+| `--message-only`   |       | Generate merge message without merging               |
+| `--show-prompt`    |       | Show the prompt sent to the LLM                      |
+| `--language`       | `-l`  | Override language for merge message                  |
+| `--model`          | `-m`  | Override the default model                           |
+| `--quiet`          | `-q`  | Suppress non-error output                            |
+| `--yes`            | `-y`  | Skip confirmation prompt                             |
+| `--hint`           | `-h`  | Additional context to guide the AI                   |
+| `--wait-checks`    |       | Wait for CI checks before merging (default: enabled) |
+| `--no-wait-checks` |       | Skip waiting for CI checks                           |
+| `--auto-resolve`   |       | Automatically resolve conflicts via rebase           |
+| `--delete-branch`  | `-d`  | Delete the head branch after merging                 |
+| `--check-timeout`  |       | Timeout for waiting on checks (seconds, default 600) |
+
+**Examples:**
+
+```sh
+# Squash merge with branch deletion
+auto-pr merge-pr --pr-number 123 --merge-method squash --delete-branch
+
+# Auto-resolve conflicts and merge
+auto-pr merge-pr --pr-number 123 --auto-resolve
+
+# Skip CI check wait for urgent merge
+auto-pr merge-pr --pr-number 123 --no-wait-checks --yes
+```
+
+**Conflict Resolution:**
+
+When merge conflicts are detected, auto-pr provides:
+
+- **Interactive resolution**: Choose between rebase, merge, or manual resolution
+- **Auto-resolution**: Use `--auto-resolve` to automatically attempt rebase
+- **Guided manual resolution**: Step-by-step guidance for resolving conflicts file by file
+
+**CI/CD Check Handling:**
+
+- Monitors check status with progress display
+- Categorizes failures as "flaky" vs "blocking"
+- Options to retry, ignore, wait, or abort when checks fail
+
+### update-pr Command
+
+Update an existing pull request description:
+
+| Flag / Option   | Short | Description                        |
+| --------------- | ----- | ---------------------------------- |
+| `--pr-number`   | `-n`  | PR number to update (required)     |
+| `--show-prompt` |       | Show the prompt sent to the LLM    |
+| `--language`    | `-l`  | Override language for description  |
+| `--model`       | `-m`  | Override the default model         |
+| `--quiet`       | `-q`  | Suppress non-error output          |
+| `--yes`         | `-y`  | Skip confirmation prompt           |
+| `--hint`        | `-h`  | Additional context to guide the AI |
+| `--verbose`     | `-v`  | Generate detailed PR description   |
+
+### status Command
+
+Show PR status and workflow state:
+
+| Flag / Option | Short | Description                   |
+| ------------- | ----- | ----------------------------- |
+| `--pr-number` | `-n`  | PR number to check status for |
+
+**Examples:**
+
+```sh
+# Show current branch status
+auto-pr status
+
+# Show specific PR with checks and reviews
+auto-pr status --pr-number 123
+```
+
+The status command displays:
+
+- Current branch information and commits ahead/behind base
+- PR state (open, draft, merged, closed)
+- CI/CD check summary (passed, failed, pending)
+- Review status and approvals
+
 ## Advanced
 
 - Combine flags for more powerful workflows (e.g., `auto-pr -ayp` to stage, auto-confirm, and push)
@@ -344,6 +518,16 @@ You can customize auto-pr's behavior with these optional environment variables:
 - `AUTO_PR_SKIP_SECRET_SCAN=true` - Disable automatic security scanning for secrets in staged changes (use with caution)
 - `AUTO_PR_NO_VERIFY_SSL=true` - Skip SSL certificate verification for API calls (useful for corporate proxies that intercept SSL traffic)
 - `AUTO_PR_NO_TIKTOKEN=true` - Stay completely offline by bypassing the `tiktoken` download step and using the built-in rough token estimator
+
+**PR Workflow Configuration:**
+
+- `GITHUB_TOKEN` or `GH_TOKEN` - GitHub API token (optional if `gh` CLI is configured)
+- `AUTO_PR_DEFAULT_REVIEWERS=user1,user2` - Default reviewers to request on PR creation
+- `AUTO_PR_DEFAULT_BASE_BRANCH=main` - Default base branch for PRs
+- `AUTO_PR_CHECK_TIMEOUT=600` - Timeout in seconds for waiting on CI checks (default: 600)
+- `AUTO_PR_AUTO_RESOLVE_CONFLICTS=false` - Automatically attempt conflict resolution
+- `AUTO_PR_MERGE_METHOD=squash` - Default merge method: merge, squash, or rebase
+- `AUTO_PR_DELETE_BRANCH=true` - Delete branch after successful merge
 
 See `.auto-pr.env.example` for a complete configuration template.
 
