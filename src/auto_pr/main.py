@@ -681,12 +681,30 @@ def create_branch_workflow(
     Returns:
         Exit code (0 for success)
     """
+    from auto_pr.branch_manager import BranchManager
     from auto_pr.git import get_diff
 
     model = model or config.get("model")
     if not model:
         console.print("[red]No model configured. Run 'auto-pr init' first.[/red]")
         return 1
+
+    branch_manager = BranchManager(console)
+    current_branch = branch_manager.get_current_branch()
+    default_branches = {"main", "master", "develop", "dev"}
+
+    if current_branch not in default_branches:
+        if not branch_manager.is_branch_pushed(current_branch):
+            if not quiet:
+                console.print(f"[yellow]Current branch '{current_branch}' is not published to remote.[/yellow]")
+
+            if not yes:
+                if click.confirm("Would you like to publish it before creating a new branch?", default=True):
+                    if not quiet:
+                        console.print(f"[cyan]Publishing branch '{current_branch}'...[/cyan]")
+                    if not branch_manager.push_branch(set_upstream=True):
+                        console.print("[red]Failed to publish branch. Aborting.[/red]")
+                        return 1
 
     def _get_diff_stat(staged: bool) -> str:
         args = ["diff", "--stat"]
