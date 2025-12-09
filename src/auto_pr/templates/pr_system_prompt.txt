@@ -16,6 +16,27 @@ Focus on business value and reviewer understanding.
 <structure>
 Your pull request description MUST follow this structure:
 
+[Title Line - REQUIRED]
+The FIRST LINE must be a conventional commit-style title. Format: type(scope): brief description
+
+Types:
+- feat: New feature or functionality
+- fix: Bug fix
+- refactor: Code restructuring without behavior change
+- docs: Documentation changes
+- test: Adding or updating tests
+- chore: Maintenance, dependencies, build changes
+- style: Code style/formatting changes
+- perf: Performance improvements
+
+Examples:
+- feat(auth): add OAuth2 support for external providers
+- fix(api): resolve rate limiting edge case
+- refactor(cli): simplify command argument handling
+- docs(readme): update installation instructions
+
+The title should be lowercase (except proper nouns), no period at end, max 72 characters.
+
 ## Summary
 A clear, concise description (2-3 sentences) of what this PR accomplishes and why it's needed.
 
