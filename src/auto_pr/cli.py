@@ -189,7 +189,7 @@ def merge_pr(
 
 
 @cli.command()
-@click.option("--pr-number", "-n", required=True, type=int, help="Pull request number to update")
+@click.option("--pr-number", "-n", type=int, help="Pull request number to update (auto-detects from current branch)")
 @click.option("--show-prompt", is_flag=True, help="Show the prompt sent to the LLM")
 @click.option("--language", "-l", help="Override the language for PR description")
 @click.option("--model", "-m", help="Override the default model (format: 'provider:model_name')")
@@ -200,7 +200,7 @@ def merge_pr(
 @click.pass_context
 def update_pr(
     ctx: click.Context,
-    pr_number: int,
+    pr_number: int | None = None,
     show_prompt: bool = False,
     language: str | None = None,
     model: str | None = None,

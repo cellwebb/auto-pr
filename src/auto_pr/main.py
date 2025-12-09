@@ -578,7 +578,7 @@ def merge_pr_workflow(
 
 
 def update_pr_workflow(
-    pr_number: int,
+    pr_number: int | None = None,
     show_prompt: bool = False,
     language: str | None = None,
     model: str | None = None,
@@ -595,6 +595,20 @@ def update_pr_workflow(
         if e.suggestion:
             console.print(f"[yellow]{e.suggestion}[/yellow]")
         return 1
+
+    if pr_number is None:
+        branch_manager = BranchManager(console)
+        current_branch = branch_manager.get_current_branch()
+
+        existing_pr = platform.find_pr_for_branch(current_branch)
+        if existing_pr is None:
+            console.print(f"[red]No open PR found for branch '{current_branch}'[/red]")
+            console.print("[yellow]Use --pr-number to specify a PR, or create one with 'auto-pr create-pr'[/yellow]")
+            return 1
+
+        pr_number = existing_pr.number
+        if not quiet:
+            console.print(f"[cyan]Found PR #{pr_number} for branch '{current_branch}'[/cyan]")
 
     try:
         pr_info = platform.get_pr(pr_number)
