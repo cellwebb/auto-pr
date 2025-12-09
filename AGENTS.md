@@ -65,7 +65,17 @@ auto-pr/
 │   ├── git.py                  # Git operations
 │   ├── security.py             # Secret detection
 │   ├── providers/              # 25+ AI provider implementations
-│   └── oauth/                  # OAuth authentication
+│   ├── oauth/                  # OAuth authentication
+│   ├── platforms/              # Git platform integrations (GitHub, etc.)
+│   │   ├── protocol.py         # Platform interface definition
+│   │   ├── models.py           # PRInfo, CheckInfo, ReviewInfo models
+│   │   ├── registry.py         # Platform auto-detection
+│   │   └── github/             # GitHub CLI/API hybrid adapter
+│   ├── pr_state_machine.py     # PR lifecycle state tracking
+│   ├── conflict_resolver.py    # Merge conflict detection/resolution
+│   ├── check_monitor.py        # CI/CD check monitoring
+│   ├── branch_manager.py       # Branch sync and management
+│   └── review_manager.py       # Review status tracking
 ├── tests/                      # Test suite (mirrors src/)
 │   └── providers/              # Provider tests
 ├── docs/                       # Documentation
@@ -78,6 +88,7 @@ auto-pr/
 - Package lives in `src/auto_pr`
 - Tests mirror source structure
 - Each provider has dedicated implementation and test files
+- Platform integrations use Protocol pattern for extensibility
 - Build artifacts (`dist/`, `htmlcov/`) are disposable
 
 ## Essential Commands
@@ -116,12 +127,24 @@ make clean                        # Remove artifacts
 **CLI Features:**
 
 ```bash
+auto-pr create-branch              # Generate branch name from changes
+auto-pr create-branch -u           # Include unstaged changes
 auto-pr create-pr                  # Generate and create PR
 auto-pr create-pr --draft          # Create as draft
 auto-pr create-pr --interactive    # Interactive mode
 auto-pr create-pr --dry-run        # Preview without creating
+auto-pr create-pr -r user1 -r user2  # Request reviewers
+auto-pr create-pr --label bug --label urgent  # Add labels
+auto-pr create-pr --wait-checks    # Wait for CI checks after creating
+auto-pr create-pr --sync           # Sync branch with base before creating
 auto-pr merge-pr --pr-number 123   # Merge PR with AI-generated message
+auto-pr merge-pr -n 123 --squash   # Use squash merge
+auto-pr merge-pr -n 123 --auto-resolve  # Auto-resolve conflicts via rebase
+auto-pr merge-pr -n 123 --delete-branch  # Delete branch after merge
+auto-pr merge-pr -n 123 --no-wait-checks  # Skip waiting for CI checks
 auto-pr update-pr --pr-number 123  # Update existing PR description
+auto-pr status                     # Show current branch and PR status
+auto-pr status --pr-number 123     # Show specific PR status
 ```
 
 **Coding Standards:**

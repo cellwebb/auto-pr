@@ -53,21 +53,21 @@ def test_config_show_no_file():
 def test_config_show_project_level_file():
     """Test show command with project-level .auto-pr.env (lines 28-30, 36->35, 38)."""
     runner = CliRunner()
-    with tempfile.TemporaryDirectory() as tmpdir:
-        fake_path = Path(tmpdir) / ".auto-pr.env"
-        project_path = Path(tmpdir) / ".auto-pr.env"  # project-level in same dir for test
-
-        # Create project-level config
+    with runner.isolated_filesystem():
+        # Create project-level config in isolated filesystem
+        project_path = Path(".auto-pr.env")
         project_path.write_text("PROJECT_VAR=value\nSECRET_KEY=secret123\n")
 
-        with patch("auto_pr.config_cli.AUTO_PR_ENV_PATH", fake_path):  # user config doesn't exist
-            with patch("auto_pr.config_cli.Path.cwd", return_value=Path(tmpdir)):
-                result = runner.invoke(config, ["show"])
-                assert result.exit_code == 0
-                assert "Project config (./.auto-pr.env):" in result.output
-                assert "PROJECT_VAR=value" in result.output
-                assert "SECRET_KEY=***hidden***" in result.output
-                assert "Note: Project-level .auto-pr.env overrides" in result.output
+        # Use a non-existent path for user config so only project config is found
+        fake_user_path = Path("/nonexistent/.auto-pr.env")
+
+        with patch("auto_pr.config_cli.AUTO_PR_ENV_PATH", fake_user_path):
+            result = runner.invoke(config, ["show"])
+            assert result.exit_code == 0
+            assert "Project config (./.auto-pr.env):" in result.output
+            assert "PROJECT_VAR=value" in result.output
+            assert "SECRET_KEY=***hidden***" in result.output
+            assert "Note: Project-level .auto-pr.env overrides" in result.output
 
 
 def test_config_get_missing_var():

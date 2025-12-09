@@ -1,43 +1,38 @@
+comment:
+  behavior: default
+  layout: reach, diff, flags, files
+  require_base: false
+  require_changes:
+    - 0
+  require_head: true
 coverage:
+  precision: 2
+  range:
+    - 50.0
+    - 80.0
+  round: down
   status:
-    project:
-      default:
-        # More lenient settings for a beta project
-        target: auto
-        threshold: 2% # More forgiving threshold
-        base: auto
-        # advanced settings
-        branches: null
-        if_no_uploads: error
-        if_not_found: success
-        if_ci_failed: error
-        only_pulls: false
-        flags: null
-        paths: null
-
-    # Add patch status to monitor coverage of new code
     patch:
       default:
-        target: 70% # Reasonable target for new code
-        threshold: 5% # Allow some flexibility
         base: auto
-
-  precision: 2
-  round: down
-  range: "50...80" # More appropriate range for a beta project
-
-# Comment settings to provide feedback on PRs
-comment:
-  layout: "reach, diff, flags, files"
-  behavior: default
-  require_changes: false # Post a comment even if coverage doesn't change
-  require_base: false
-  require_head: true
-
+        target: 70.0
+        threshold: 5.0
+    project:
+      default:
+        base: auto
+        branches: null
+        flags: null
+        if_ci_failed: error
+        if_no_uploads: error
+        if_not_found: success
+        only_pulls: false
+        paths: null
+        target: auto
+        threshold: 2.0
 ignore:
-  - "src/auto_pr/main.py" # Ignore main.py from coverage calculations
-  - "tests/**/*" # Exclude test files from coverage calculation
-  - "**/__version__.py" # Version file doesn't need test coverage
-  - "examples/**/*" # Example files are for demonstration
-  - "docs/**/*" # Documentation doesn't need coverage
-  - "scripts/**/*" # Private scripts are for demonstration
+  - ^src/auto_pr/main.py.*
+  - (?s:tests/.*/[^\/]*)\Z
+  - (?s:.*/__version__\.py)\Z
+  - (?s:examples/.*/[^\/]*)\Z
+  - (?s:docs/.*/[^\/]*)\Z
+  - (?s:scripts/.*/[^\/]*)\Z

@@ -35,6 +35,13 @@ class AutoPRConfig(TypedDict, total=False):
     translate_prefixes: bool
     rtl_confirmed: bool
     hook_timeout: int
+    github_token: str | None
+    default_reviewers: list[str]
+    default_base_branch: str
+    wait_for_checks_timeout: int
+    auto_resolve_conflicts: bool
+    default_merge_method: str
+    delete_branch_after_merge: bool
 
 
 def validate_config(config: AutoPRConfig) -> None:
@@ -99,6 +106,9 @@ def load_config() -> AutoPRConfig:
     if project_auto_pr_env.exists():
         load_dotenv(project_auto_pr_env, override=True)
 
+    reviewers_str = os.getenv("AUTO_PR_DEFAULT_REVIEWERS", "")
+    default_reviewers = [r.strip() for r in reviewers_str.split(",") if r.strip()]
+
     config: AutoPRConfig = {
         "model": os.getenv("AUTO_PR_MODEL"),
         "temperature": float(os.getenv("AUTO_PR_TEMPERATURE", EnvDefaults.TEMPERATURE)),
@@ -120,6 +130,14 @@ def load_config() -> AutoPRConfig:
         "translate_prefixes": os.getenv("AUTO_PR_TRANSLATE_PREFIXES", "false").lower() in ("true", "1", "yes", "on"),
         "rtl_confirmed": os.getenv("AUTO_PR_RTL_CONFIRMED", "false").lower() in ("true", "1", "yes", "on"),
         "hook_timeout": int(os.getenv("AUTO_PR_HOOK_TIMEOUT", EnvDefaults.HOOK_TIMEOUT)),
+        "github_token": os.getenv("GITHUB_TOKEN") or os.getenv("GH_TOKEN"),
+        "default_reviewers": default_reviewers,
+        "default_base_branch": os.getenv("AUTO_PR_DEFAULT_BASE_BRANCH", "main"),
+        "wait_for_checks_timeout": int(os.getenv("AUTO_PR_CHECK_TIMEOUT", "600")),
+        "auto_resolve_conflicts": os.getenv("AUTO_PR_AUTO_RESOLVE_CONFLICTS", "false").lower()
+        in ("true", "1", "yes", "on"),
+        "default_merge_method": os.getenv("AUTO_PR_MERGE_METHOD", "merge"),
+        "delete_branch_after_merge": os.getenv("AUTO_PR_DELETE_BRANCH", "false").lower() in ("true", "1", "yes", "on"),
     }
 
     validate_config(config)
