@@ -34,10 +34,11 @@ class BranchManager:
         """
         try:
             if remote:
-                run_git_command(["ls-remote", "--heads", "origin", branch], silent=True)
+                result = run_git_command(["ls-remote", "--heads", "origin", branch], silent=True)
+                return bool(result.strip())
             else:
                 run_git_command(["rev-parse", "--verify", branch], silent=True)
-            return True
+                return True
         except GitError:
             return False
 
