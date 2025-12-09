@@ -245,7 +245,15 @@ def create_pr_workflow(
 
     if not branch_manager.is_branch_pushed(current_branch):
         if not quiet:
-            console.print(f"[cyan]Pushing branch '{current_branch}' to remote...[/cyan]")
+            console.print(f"[yellow]Branch '{current_branch}' is not published to remote.[/yellow]")
+
+        if not yes:
+            if not click.confirm("Would you like to publish it before creating the PR?", default=True):
+                console.print("[yellow]PR creation cancelled. Push your branch first.[/yellow]")
+                return 0
+
+        if not quiet:
+            console.print(f"[cyan]Publishing branch '{current_branch}'...[/cyan]")
         if not branch_manager.push_branch(set_upstream=True):
             return 1
 
