@@ -170,8 +170,23 @@ Additional context: {hint}
 
 
 def extract_pr_title_body(pr_description: str) -> tuple[str, str]:
-    """Extract title from PR description."""
+    """Extract title from PR description.
+
+    Expects first line to be a conventional commit-style title.
+    Returns (title, body) where body excludes the title line.
+    """
     lines = pr_description.strip().split("\n")
+    if not lines:
+        return "Update", ""
+
+    first_line = lines[0].strip()
+
+    if _is_conventional_title(first_line):
+        title = first_line[:72]
+        if len(first_line) > 72:
+            title = title.rsplit(" ", 1)[0] + "..."
+        body = "\n".join(lines[1:]).strip()
+        return title, body
 
     for i, line in enumerate(lines):
         line = line.strip()
@@ -190,7 +205,6 @@ def extract_pr_title_body(pr_description: str) -> tuple[str, str]:
                         title = title.rsplit(" ", 1)[0] + "..."
                     return title, pr_description
 
-    first_line = lines[0].strip() if lines else "Update"
     title = first_line[:72]
     if first_line.startswith("## "):
         title = first_line[3:][:72]
@@ -198,6 +212,16 @@ def extract_pr_title_body(pr_description: str) -> tuple[str, str]:
         title = title.rsplit(" ", 1)[0] + "..."
 
     return title, pr_description
+
+
+def _is_conventional_title(line: str) -> bool:
+    """Check if line is a conventional commit-style title."""
+    prefixes = ("feat", "fix", "refactor", "docs", "test", "chore", "style", "perf", "build", "ci")
+    line_lower = line.lower()
+    for prefix in prefixes:
+        if line_lower.startswith(f"{prefix}:") or line_lower.startswith(f"{prefix}("):
+            return True
+    return False
 
 
 def create_pr_workflow(
