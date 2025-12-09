@@ -260,7 +260,7 @@ class TestWorkflowContextIntegration:
         # Verify they don't interfere with each other
         assert create_opts.draft is True
         assert merge_opts.merge_method == "squash"
-        assert update_opts.verbose is True
+        assert update_opts.pr_number == 456
 
         # Test that each has the right structure
         assert hasattr(create_opts, "base_branch")
